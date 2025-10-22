@@ -3,15 +3,20 @@
 import type { FormProps } from "antd";
 import { Button, Form, Input, Row, Col } from "antd";
 import { Typography } from "antd";
+import { login } from "../actions";
 
 type FieldType = {
-  username?: string;
+  email?: string;
   password?: string;
   remember?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values: any) => {
+const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
   console.log("Success:", values);
+  const formData = new FormData();
+  formData.append("email", values.email || "");
+  formData.append("password", values.password || "");
+  await login(formData)
 };
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -19,10 +24,6 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
 ) => {
   console.log("Failed:", errorInfo);
 };
-
-const DemoBox: React.FC<React.PropsWithChildren<{ value: number }>> = (
-  props
-) => <p className={`height-${props.value}`}>{props.children}</p>;
 
 export default function Page() {
   const [form] = Form.useForm();
@@ -48,15 +49,16 @@ export default function Page() {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             style={{ maxWidth: 400, margin: "0 auto", paddingTop: 24 }}
+           
           >
             <Form.Item<FieldType>
-              label="Username"
-              name="username"
+              label="Email Address"
+              name="email"
               rules={[
-                { required: true, message: "Please input your username!" },
+                { required: true, message: "Please input your email address" },
               ]}
             >
-              <Input placeholder="Enter username" />
+              <Input placeholder="Enter your email" />
             </Form.Item>
 
             <Form.Item<FieldType>
